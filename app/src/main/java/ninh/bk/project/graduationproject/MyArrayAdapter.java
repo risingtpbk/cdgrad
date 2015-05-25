@@ -6,6 +6,7 @@ package ninh.bk.project.graduationproject;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -18,13 +19,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MyArrayAdapter extends ArrayAdapter<String>{
-    Activity context=null;
-    ArrayList<String> myArray;
+public class MyArrayAdapter extends ArrayAdapter<Item>{
+    Context context=null;
+    ArrayList<Item> myArray;
     int layoutId;
     DBHelper mydb;
 
-    public MyArrayAdapter(Activity context, int layoutId, ArrayList<String> Array) {
+    public MyArrayAdapter(Context context, int layoutId, ArrayList<Item> Array) {
         super(context, layoutId, Array);
         // TODO Auto-generated constructor stub
         this.context = context;
@@ -36,42 +37,49 @@ public class MyArrayAdapter extends ArrayAdapter<String>{
     public View getView(int position, View convertView, ViewGroup parent) {
 
 
-        LayoutInflater inflater=context.getLayoutInflater();
-        convertView=inflater.inflate(layoutId, null);
-        convertView.setMinimumHeight(78);
-        final TextView stt=(TextView) convertView.findViewById(R.id.stt);
-        final TextView status=(TextView) convertView.findViewById(R.id.status);
-        final TextView name=(TextView) convertView.findViewById(R.id.name);
-        final ImageView icon=(ImageView) convertView.findViewById(R.id.icon);
+
+        View row = convertView;
+        RecordHolder holder = null;
+
+        if (row == null) {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            row = inflater.inflate(layoutId, parent, false);
+            row.setMinimumHeight(78);
+
+
+            holder = new RecordHolder();
+            holder.stt = (TextView) row.findViewById(R.id.stt);
+            holder.status=(TextView) row.findViewById(R.id.status);
+            holder.name=(TextView) row.findViewById(R.id.name);
+            holder.icon=(ImageView) row.findViewById(R.id.icon);
+            row.setTag(holder);
+                     } else {
+                         holder = (RecordHolder) row.getTag();
+                     }
 
 
         int stt12 = position+1;
-        stt.setText(""+stt12);
-        name.setText(myArray.get(position));
 
+        if(stt12%2==1)
+            row.setBackgroundColor(Color.parseColor("#CFCFCF"));
+        else
+            row.setBackgroundColor(Color.parseColor("#00000000"));
 
-        if(mydb.getStatus(mydb.getPackage(myArray.get(position)))==0) status.setText("OFF");
-        else  status.setText("ON");
+        holder.stt.setText(""+stt12);
+        holder.name.setText(myArray.get(position).getName());
+        holder.status.setText(myArray.get(position).getStatus());
+        holder.icon.setImageDrawable(myArray.get(position).getImage());
 
-        try {
-            Drawable image = resize(context.getPackageManager().getApplicationIcon(mydb.getPackage(myArray.get(position))));
-            icon.setImageDrawable(image);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        stt.setTextColor(Color.parseColor("#000077"));
-        name.setTextColor(Color.parseColor("#000077"));
-        status.setTextColor(Color.parseColor("#000077"));
-        if (position%2==1)
-        {
-            convertView.setBackgroundColor(Color.parseColor("#CFCFCF"));
-        }
+        holder.stt.setTextColor(Color.parseColor("#000077"));
+        holder.name.setTextColor(Color.parseColor("#000077"));
+        if(holder.status.getText().equals("ON"))
+            holder.status.setTextColor(Color.parseColor("#006400"));
+        else
+        holder.status.setTextColor(Color.parseColor("#696969"));
 
         mydb.close();
 
-        return convertView;
+        return row;
     }
 
 

@@ -27,13 +27,15 @@ public class Options extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.options);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.icon_key_alert_2);
+
         final DBHelper mydb = new DBHelper(this);
 
         listapp = (ListView)findViewById(R.id.options);
 
 
-        final ArrayList<String> arrayapp = mydb.getAllApp();
-        Log.i("GETPACKAGE", arrayapp.get(1));
+        final ArrayList<Item> arrayapp = mydb.getAllAppFullInfo();
 
         final MyArrayAdapter lvadapter = new MyArrayAdapter(this, R.layout.mylistview, arrayapp);
         listapp.setAdapter(lvadapter);
@@ -41,8 +43,13 @@ public class Options extends ActionBarActivity{
         listapp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0,View arg1, int arg2,long arg3) {
                 //System.out.println("position : "+ arg2+ "; value =" + result[arg2]);
-                mydb.changeStatus(mydb.getPackage(arrayapp.get(arg2)));
-                listapp.invalidateViews();
+                mydb.changeStatus(arrayapp.get(arg2).getApppackage());
+                if(arrayapp.get(arg2).getStatus().equals("ON"))
+                    arrayapp.get(arg2).setStatus("OFF");
+                else
+                    arrayapp.get(arg2).setStatus("ON");
+                lvadapter.notifyDataSetChanged();
+
                 mydb.close();
             }
         });
