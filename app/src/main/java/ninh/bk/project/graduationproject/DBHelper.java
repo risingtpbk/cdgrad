@@ -35,12 +35,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PROCESS = "process";
 
 
-
+    Context context;
 
 
     public DBHelper(Context context)
     {
         super(context, DATABASE_NAME , null, 1);
+        this.context = context;
     }
 
 
@@ -192,10 +193,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 double received = oldreceived + thisreceived;
 
                 array_list.add(
-                        res.getInt(res.getColumnIndex(COLUMN_ID))
-                                + ". " + getAppName(res.getString(res.getColumnIndex(COLUMN_APPPACKAGE)))
-                                + "\nSent: " + sent
-                                + "\nReceived: " + received);
+                        new ItemData(getAppName(res.getString(res.getColumnIndex(COLUMN_APPPACKAGE))),
+                                sent, received));
                 res.moveToNext();
             }
 
@@ -270,24 +269,26 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             array_list = new ArrayList();
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor res = db.rawQuery("select id, name, status from appinfo", null);
+            Cursor res = db.rawQuery("select name, apppackage, status from appinfo", null);
             res.moveToFirst();
             while (res.isAfterLast() == false) {
 
-                String id = res.getString(res.getColumnIndex(COLUMN_ID));
                 String name = res.getString(res.getColumnIndex(COLUMN_NAME));
+                String apppackage = res.getString(res.getColumnIndex(COLUMN_APPPACKAGE));
                 String status;
-                Drawable image = null;
                 if (res.getInt(res.getColumnIndex(COLUMN_STATUS)) == 0) status = "OFF";
                 else status = "ON";
 
-//            try {
-//                image = resize(Options.con.getPackageManager().getApplicationIcon(getPackage(name)));
-//            } catch (PackageManager.NameNotFoundException e) {
-//                e.printStackTrace();
-//            }
+                Drawable image = null;
+                try {
+                    image = resize(context.getPackageManager().getApplicationIcon(apppackage));
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
 
-                array_list.add(new Item(image, id, name, status));
+
+
+                array_list.add(new Item(name, apppackage, image, status));
                 res.moveToNext();
             }
 
@@ -494,5 +495,11 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
+    }
+
+    private Drawable resize(Drawable image) {
+        Bitmap b = ((BitmapDrawable)image).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 65, 65, false);
+        return new BitmapDrawable(context.getResources(), bitmapResized);
     }
 }

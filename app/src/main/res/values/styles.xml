@@ -9,4 +9,37 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
+        <!-- the theme applied to the application or activity -->
+        <style name="CustomActionBarTheme"
+            parent="@style/Theme.AppCompat.Light.DarkActionBar">
+            <item name="android:actionBarStyle">@style/MyActionBar</item>
+
+            <!-- Support library compatibility -->
+            <item name="actionBarStyle">@style/MyActionBar</item>
+        </style>
+
+        <!-- ActionBar styles -->
+        <style name="MyActionBar"
+            parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+            <item name="android:background">@color/xanhreu</item>
+            <item name="titleTextStyle">@style/MyTitleTextStyle</item>
+            <!-- Support library compatibility -->
+            <item name="background">@color/xanhreu</item>
+        </style>
+
+    <style name="MyTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <!--<item name="android:textColor">CHANGE_COLOR_HERE</item>-->
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="Transparent" parent="Theme.AppCompat.Light">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+
 </resources>

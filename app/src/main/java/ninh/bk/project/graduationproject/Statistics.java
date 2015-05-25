@@ -15,6 +15,9 @@ public class Statistics extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistics);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.chart_icon_actionbar);
+
     }
 
     public void checkSMS(View v)

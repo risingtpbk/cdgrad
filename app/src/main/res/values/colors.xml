@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#F7F7F7</color>
+    <color name="blue_button">#66CCFF</color>
+    <color name="blue">#00B2EE</color>
+    <color name="brown">#DEB887</color>
+    <color name="bluenhat">#00CED1</color>
+    <color name="green">#008000</color>
+    <color name="greendam">#006400</color>
+    <color name="xanhreu">#008080</color>
+    <color name="transparent">#00000000</color>
+</resources>
