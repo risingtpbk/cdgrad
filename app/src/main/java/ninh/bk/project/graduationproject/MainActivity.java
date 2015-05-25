@@ -66,9 +66,10 @@ public class MainActivity extends ActionBarActivity {
         if (!databaseFile.exists()) {
             getAllApplication();
             updateAllData();
+            insertAllAppSentSMS();
             Log.i("DATABASE", "Already has");
         } else {
-            updateAllApplication();
+//            updateAllApplication();
 
         }
     }
@@ -104,6 +105,46 @@ public class MainActivity extends ActionBarActivity {
             if(requestedPermissions != null) {
                 for (int k = 0; k < requestedPermissions.length; k++) {
                     if(requestedPermissions[k].contains("android.permission.INTERNET"))
+                        return true;
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void insertAllAppSentSMS() {
+        final PackageManager pm = getPackageManager();
+        // get a list of installed apps.
+        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        // loop through the list of installed packages and see if the selected
+        // app is in the list
+        for (ApplicationInfo packageInfo : packages) {
+
+            if(pm.getLaunchIntentForPackage(packageInfo.packageName)!= null &&
+                    !pm.getLaunchIntentForPackage(packageInfo.packageName).equals("")&&
+                    hasperSMSSent(pm,packageInfo.packageName)
+                    )
+            {
+
+                String package_name = packageInfo.packageName;
+
+                mydb.insertAppSentSMS(package_name, 0);
+
+            }
+        }
+    }
+
+    private boolean hasperSMSSent(PackageManager pm, String packagename) {
+        try {
+            PackageInfo packageInfo1 = pm.getPackageInfo(packagename, PackageManager.GET_PERMISSIONS);
+            String[] requestedPermissions = packageInfo1.requestedPermissions;
+
+            if(requestedPermissions != null) {
+                for (int k = 0; k < requestedPermissions.length; k++) {
+                    if(requestedPermissions[k].contains("android.permission.SEND_SMS"))
                         return true;
                 }
             }

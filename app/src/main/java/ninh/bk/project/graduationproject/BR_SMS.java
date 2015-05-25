@@ -88,6 +88,7 @@ public class BR_SMS extends BroadcastReceiver {
                      !app.contains(mydb.getAppName(packagename))
                         )
                 {
+                    mydb.updateAppSentSMS(packagename, mydb.getCount(packagename) + 1);
                     app.add(mydb.getAppName(packagename));
                 }
             }

@@ -33,6 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_BODY = "body";
     public static final String COLUMN_PROCESS = "process";
+    public static final String COLUMN_COUNT = "count";
 
 
     Context context;
@@ -57,6 +58,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "create table smsinfo " +"(id integer primary key, address text, date text, body text, process text)"
+        );
+
+        db.execSQL(
+                "create table appsentsms " +"(id integer primary key, apppackage text, count integer)"
         );
 
     }
@@ -98,11 +103,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
                 array_list.add(
-                        res.getInt(res.getColumnIndex(COLUMN_ID))
-                                + ". " + address
-                                + "\n " + date
-                                + "\n" + body
-                                + "\n" + process);
+                        new ItemSMS(address, date, body, process)
+                );
 
                 res.moveToNext();
             }
@@ -152,6 +154,82 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public void insertAppSentSMS (String apppackage, int count)
+    {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+
+            contentValues.put("apppackage", apppackage);
+            contentValues.put("count", count);
+
+            db.insert("appsentsms", null, contentValues);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateAppSentSMS(String apppackage, int count) {
+
+        int id = 0;
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res = db.rawQuery("select id from appsentsms where apppackage='" + apppackage + "'", null);
+
+            res.moveToFirst();
+            id = res.getInt(res.getColumnIndex(COLUMN_ID));
+            res.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("count", count);
+
+            db.update("appsentsms", contentValues, "id = ? ", new String[]{Integer.toString(id)});
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public ArrayList getAllAppSentSMS()
+    {
+        ArrayList array_list = null;
+        try {
+            array_list = new ArrayList();
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor res = db.rawQuery("select * from appsentsms", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+
+                String name = getAppName(res.getString(res.getColumnIndex(COLUMN_APPPACKAGE)));
+                int count = res.getInt(res.getColumnIndex(COLUMN_COUNT));
+
+                array_list.add(
+                        new App_SMS_Item(name, count)
+                        );
+                res.moveToNext();
+            }
+
+            res.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return array_list;
     }
 
     public void insertData (String apppackage, double oldsent, double oldreceived, double thissent, double thisreceived)
@@ -501,5 +579,24 @@ public class DBHelper extends SQLiteOpenHelper {
         Bitmap b = ((BitmapDrawable)image).getBitmap();
         Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 65, 65, false);
         return new BitmapDrawable(context.getResources(), bitmapResized);
+    }
+
+    public int getCount(String apppackage) {
+
+            int count = 0;
+            try {
+                SQLiteDatabase db = this.getReadableDatabase();
+                Cursor res = db.rawQuery("select count from appsentsms where apppackage='" + apppackage + "'", null);
+
+                res.moveToFirst();
+                count = res.getInt(res.getColumnIndex(COLUMN_COUNT));
+                res.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+        return count;
     }
 }
