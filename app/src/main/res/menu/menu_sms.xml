@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".SMSStat">
+
+    <item
+        android:id="@+id/next"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_next_item"
+        app:showAsAction="ifRoom"
+        android:title="Count ..."
+        />
+</menu>
