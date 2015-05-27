@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -26,7 +27,9 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     DBHelper mydb;
-
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String pass = "pass";
+    SharedPreferences sharedpreferences;
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,13 @@ public class MainActivity extends ActionBarActivity {
         } else {
 //            updateAllApplication();
 
+        }
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        if(!sharedpreferences.contains("pass"))
+        {
+            Intent i = new Intent(this, CreatePassword.class);
+            startActivity(i);
         }
     }
 
@@ -252,4 +262,28 @@ public class MainActivity extends ActionBarActivity {
         super.onPause();
         Log.i("SMSMS","pause");
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_mainactivity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.setting) {
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }
