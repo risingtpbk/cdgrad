@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".SMSStat">
 
     <item
-        android:id="@+id/setting"
+        android:id="@+id/changepass"
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="Change Password"

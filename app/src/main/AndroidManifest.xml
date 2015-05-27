@@ -37,6 +37,17 @@
             android:label="Create Password">
         </activity>
 
+        <activity
+            android:name=".ChangePassword"
+            android:label="Change Password"
+            android:theme="@style/DialogTheme">
+        </activity>
+
+        <activity
+            android:name=".About"
+            android:label="About"
+            android:theme="@style/DialogTheme">
+        </activity>
 
         <activity
             android:name=".SMSStat"
