@@ -279,8 +279,14 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.setting) {
+        if (id == R.id.changepass) {
+                Intent i = new Intent(this, ChangePassword.class);
+                startActivity(i);
+        }
 
+        if (id == R.id.about) {
+            Intent i = new Intent(this, About.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);

@@ -41,5 +41,7 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Customize your theme here. -->
+    </style>
 </resources>

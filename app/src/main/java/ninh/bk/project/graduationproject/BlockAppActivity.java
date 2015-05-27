@@ -97,7 +97,7 @@ public class BlockAppActivity extends ActionBarActivity{
         }
         else {
             password.setText("");
-            password.setHint("Wrong password, let try again");
+            password.setHint("Wrong password");
         }
     }
 

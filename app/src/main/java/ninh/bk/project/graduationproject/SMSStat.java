@@ -36,7 +36,7 @@ public class SMSStat extends ActionBarActivity{
         DBHelper mydb = new DBHelper(this);
         getSMS = (ListView)findViewById(R.id.getSMS);
         appSent = (ListView)findViewById(R.id.AppSentData);
-        getSupportActionBar().setTitle("App Statistics");
+        getSupportActionBar().setTitle("SMS Sent Info");
 //		[_id, thread_id, address, person, date, date_sent, protocol,
 //		 read, status, type, reply_path_present, subject, body, service_center,
 //		 locked, sub_id, error_code, seen, si_or_id, group_id, imsi]
@@ -75,7 +75,7 @@ public class SMSStat extends ActionBarActivity{
         final App_smsArrayAdapter adapter2 = new App_smsArrayAdapter(this, R.layout.app_sms_listview, ar2);
         appSent.setAdapter(adapter2);
 
-        getSMS.setVisibility(View.INVISIBLE);
+        appSent.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -101,14 +101,14 @@ public class SMSStat extends ActionBarActivity{
             if(appSent.isShown()) {
                 appSent.setVisibility(View.INVISIBLE);
                 getSMS.setVisibility(View.VISIBLE);
-                menuItem.setIcon(R.drawable.ic_action_previous_item);
+                menuItem.setIcon(R.drawable.ic_action_next_item);
                 getSupportActionBar().setTitle("SMS Sent Info");
             }
             else
             {
                 appSent.setVisibility(View.VISIBLE);
                 getSMS.setVisibility(View.INVISIBLE);
-                menuItem.setIcon(R.drawable.ic_action_next_item);
+                menuItem.setIcon(R.drawable.ic_action_previous_item);
                 getSupportActionBar().setTitle("App Statistics");
             }
         }
