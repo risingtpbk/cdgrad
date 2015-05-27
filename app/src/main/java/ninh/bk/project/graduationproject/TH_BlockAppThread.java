@@ -4,7 +4,9 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.util.Log;
 
 import java.util.List;
@@ -17,13 +19,17 @@ public class TH_BlockAppThread extends Thread{
     Context context = null;
     Service service = null;
     DBHelper mydb;
-
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
+    PowerManager pm;
 
     public TH_BlockAppThread(Context con, Service service){
         this.context = con;
         this.service = service;
 
         mydb = new DBHelper(context);
+        pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        sharedpreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
     }
 
 
@@ -39,6 +45,14 @@ public class TH_BlockAppThread extends Thread{
             }
 
             try {
+
+                if(!pm.isScreenOn())
+                {
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString("tempallow", "");
+                    Log.i("TEMP1", sharedpreferences.getString("tempallow",""));
+                    editor.commit();
+                }
 
                 Log.i("TASK", "===============================");
                 // Using ACTIVITY_SERVICE with getSystemService(String)
@@ -67,8 +81,10 @@ public class TH_BlockAppThread extends Thread{
 //                    Log.i("TASK", "===============================");
 
 
-                    if (!aTask.topActivity.getClassName().equals(context.getPackageName() + ".BlockAppActivity")) {
-
+                    if ((!aTask.topActivity.getClassName().equals(context.getPackageName() + ".BlockAppActivity"))&&
+                            (!checktemporary(aTask.topActivity.getPackageName()))
+                            )
+                    {
                         if (mydb.getStatus(aTask.topActivity.getPackageName()) == 1) {
                             Intent i = new Intent(service, BlockAppActivity.class);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -85,6 +101,19 @@ public class TH_BlockAppThread extends Thread{
 
         }
 
+    }
+
+    private boolean checktemporary(String packageName) {
+        String temp = sharedpreferences.getString("tempallow", "");
+
+        String part[] = temp.split("/");
+        for(int i = 0; i < part.length; i++)
+        {
+            if(part[i].equals(packageName)) return true;
+        }
+        Log.i("TEMP", temp);
+
+        return false;
     }
 
 }

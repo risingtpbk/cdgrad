@@ -1,5 +1,6 @@
 package ninh.bk.project.graduationproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -25,11 +26,15 @@ public class BlockAppActivity extends ActionBarActivity{
     TextView show_premission;
     EditText password;
     String packageapp;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.block_app_activity);
 
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         Bundle extras = getIntent().getExtras();
         packageapp = extras.getString("PACKAGE");
@@ -84,13 +89,24 @@ public class BlockAppActivity extends ActionBarActivity{
 
     public void confirm(View v)
     {
-        if(password.getText().toString().equals("123"))
+        if(password.getText().toString().equals(sharedpreferences.getString("pass", "")))
         {
-            mydb.changeStatus(packageapp);
+//            mydb.changeStatus(packageapp);
+            addtemporaryallow(packageapp);
             this.finish();
         }
-        else
+        else {
+            password.setText("");
             password.setHint("Wrong password, let try again");
+        }
+    }
+
+    private void addtemporaryallow(String packageapp) {
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        String old = sharedpreferences.getString("tempallow", "");
+        if(!old.contains(packageapp))
+        editor.putString("tempallow", old + packageapp + "/");
+        editor.commit();
     }
 
     public void exit(View v)
