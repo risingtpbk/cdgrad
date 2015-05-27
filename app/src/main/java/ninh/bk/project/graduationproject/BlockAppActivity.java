@@ -1,20 +1,27 @@
 package ninh.bk.project.graduationproject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,16 +30,20 @@ import java.util.List;
 public class BlockAppActivity extends ActionBarActivity{
 
     DBHelper mydb;
-    TextView show_premission;
+    ListView show_premission;
+    TextView show_app;
     EditText password;
     String packageapp;
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
+    ArrayList<String> array = new ArrayList<>();
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.block_app_activity);
 
+        builder = new AlertDialog.Builder(BlockAppActivity.this);
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
@@ -40,7 +51,8 @@ public class BlockAppActivity extends ActionBarActivity{
         packageapp = extras.getString("PACKAGE");
 
         mydb = new DBHelper(this);
-        show_premission = (TextView)findViewById(R.id.show_permission);
+        show_app = (TextView)findViewById(R.id.show_app);
+        show_premission = (ListView)findViewById(R.id.show_permission);
         password = (EditText)findViewById(R.id.password);
 
         final StringBuilder log = new StringBuilder();
@@ -64,8 +76,10 @@ public class BlockAppActivity extends ActionBarActivity{
                                 log.append("- Permission: " + "\n");
                 if(requestedPermissions != null) {
                     for (int k = 0; k < requestedPermissions.length; k++) {
-                                log.append(i+ ": "+requestedPermissions[k]+"\n");
-                                log.append("\n");
+
+                        array.add(requestedPermissions[k]);
+//                                log.append(i+ ": "+requestedPermissions[k]+"\n");
+//                                log.append("\n");
                                 i++;
 
 
@@ -79,11 +93,44 @@ public class BlockAppActivity extends ActionBarActivity{
                     e.printStackTrace();
                 }
 
+        String w = log.toString();
+        show_app.setText(w);
+
+        Permission_listview_adapter adapter=new Permission_listview_adapter(this, R.layout.permission_listview, array);
+        show_premission.setAdapter(adapter);
+
+        show_premission.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                builder.setTitle(array.get(position));
+                builder.setMessage(getinfo(array.get(position)));
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
 
 
-            String w = log.toString();
-            show_premission.setText(w);
+                    }
+                });
+                builder.show();
+            }
+        });
 
+    }
+
+    private String getinfo(String s) {
+        PermissionInfo pinfo;
+        String info;
+        try {
+        PackageManager pm = getPackageManager();
+            pinfo = pm.getPermissionInfo(s, PackageManager.GET_META_DATA);
+            info = "- " + pinfo.loadLabel(pm).toString() + "\n" + "- Description:" + "\n" + pinfo.loadDescription(pm).toString();
+        } catch (Exception e) {
+            return "Sorry, this permission will be updated later...";
+        }
+
+        return info;
 
     }
 

@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="   Control Permission of Android Applications \n   Version: 1.0.0 \n\n   Nguyen Ke Ninh \n   Student at Ha Noi University of Science and Techonogy \n   Email: ninhbkhn2010@gmail.com"
+        android:text="   Monitor Android Applications' Permissions \n   Version: 1.0.0 \n\n   Nguyen Ke Ninh \n   Student at Ha Noi University of Science and Techonogy \n   Email: ninhbkhn2010@gmail.com"
         android:textSize="18sp"
     />
 </LinearLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Graduation Project</string>
+    <string name="app_name">Permission Monitor</string>
     <string name="action_settings">Settings</string>
     <string name="alert_lock"><![CDATA[Alert & Lock]]></string>
 </resources>

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:textColor="@android:color/black"
-        android:text="For first use, you must create a password, this password will be asked if you want open an applications that has been locked"/>
+        android:text=" For the first time using, you have to create your password. You will be using this password whenever you want to open an application that has been locked"/>
 
     <LinearLayout
         android:layout_width="match_parent"
