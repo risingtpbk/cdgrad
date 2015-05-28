@@ -27,6 +27,7 @@ public class SMSStat extends ActionBarActivity{
     ListView getSMS;
     ListView appSent;
     private Menu menu;
+    TextView textifno;
     MenuItem menuItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +35,10 @@ public class SMSStat extends ActionBarActivity{
         setContentView(R.layout.sms_stat);
 
         DBHelper mydb = new DBHelper(this);
+        textifno = (TextView)findViewById(R.id.textifno);
         getSMS = (ListView)findViewById(R.id.getSMS);
         appSent = (ListView)findViewById(R.id.AppSentData);
         getSupportActionBar().setTitle("SMS Sent Info");
-//		[_id, thread_id, address, person, date, date_sent, protocol,
-//		 read, status, type, reply_path_present, subject, body, service_center,
-//		 locked, sub_id, error_code, seen, si_or_id, group_id, imsi]
-
-//        Uri SMS_INBOX = Uri.parse("content://sms");
-//        Cursor c = getContentResolver().query(SMS_INBOX, null, null, null, null);
-//        Log.i("COLUMNS", Arrays.toString(c.getColumnNames()));
-
- /*       Uri mSmsinboxQueryUri = Uri.parse("content://sms/sent");
-        Cursor cursor1 = getContentResolver().query(mSmsinboxQueryUri,
-                new String[] { "_id", "thread_id", "address", "person", "date", "date_sent", "protocol",
-                        "read", "status", "type", "reply_path_present", "subject", "body", "service_center",
-                        "locked", "sub_id", "error_code", "seen", "si_or_id", "group_id", "imsi"}, null, null, null);*/
 
         ArrayList<ItemSMS> ar = mydb.getSms();
         Collections.sort(ar, new Comparator<ItemSMS>() {
@@ -59,6 +48,7 @@ public class SMSStat extends ActionBarActivity{
                 return (rhs.getTime().compareToIgnoreCase(lhs.getTime()));
             }
         });
+        if(!ar.isEmpty()) textifno.setVisibility(View.INVISIBLE);
         final SMSArrayAdapter adapter = new SMSArrayAdapter(this, R.layout.sms_listview, ar);
         getSMS.setAdapter(adapter);
 
@@ -99,6 +89,8 @@ public class SMSStat extends ActionBarActivity{
         if (id == R.id.next) {
 
             if(appSent.isShown()) {
+                if(getSMS.getAdapter().isEmpty())
+                textifno.setVisibility(View.VISIBLE);
                 appSent.setVisibility(View.INVISIBLE);
                 getSMS.setVisibility(View.VISIBLE);
                 menuItem.setIcon(R.drawable.ic_action_next_item);
@@ -106,6 +98,7 @@ public class SMSStat extends ActionBarActivity{
             }
             else
             {
+                textifno.setVisibility(View.INVISIBLE);
                 appSent.setVisibility(View.VISIBLE);
                 getSMS.setVisibility(View.INVISIBLE);
                 menuItem.setIcon(R.drawable.ic_action_previous_item);

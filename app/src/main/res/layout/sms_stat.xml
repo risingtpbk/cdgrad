@@ -15,4 +15,13 @@
         android:layout_height="wrap_content"
         />
 
+    <TextView
+        android:layout_marginTop="10sp"
+        android:id="@+id/textifno"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No SMS to show now"
+        android:textSize="@dimen/abc_text_size_large_material"
+        />
 </FrameLayout>
