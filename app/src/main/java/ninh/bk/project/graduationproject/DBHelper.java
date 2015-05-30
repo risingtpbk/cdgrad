@@ -357,16 +357,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 if (res.getInt(res.getColumnIndex(COLUMN_STATUS)) == 0) status = "OFF";
                 else status = "ON";
 
-                Drawable image = null;
-                try {
-                    image = resize(context.getPackageManager().getApplicationIcon(apppackage));
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-
-
-                array_list.add(new Item(name, apppackage, image, status));
+                array_list.add(new Item(name, apppackage, context.getResources().getDrawable( R.mipmap.ic_launcher), status));
                 res.moveToNext();
             }
 
@@ -575,11 +566,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    private Drawable resize(Drawable image) {
-        Bitmap b = ((BitmapDrawable)image).getBitmap();
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 65, 65, false);
-        return new BitmapDrawable(context.getResources(), bitmapResized);
-    }
+
 
     public int getCount(String apppackage) {
 

@@ -4,6 +4,10 @@ import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -23,6 +27,9 @@ import java.util.List;
 public class Options extends ActionBarActivity{
 
     ListView listapp;
+    ArrayList<Item> arrayapp;
+    MyArrayAdapter lvadapter;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.options);
@@ -35,10 +42,16 @@ public class Options extends ActionBarActivity{
         listapp = (ListView)findViewById(R.id.options);
 
 
-        final ArrayList<Item> arrayapp = mydb.getAllAppFullInfo();
+        arrayapp = mydb.getAllAppFullInfo();
 
-        final MyArrayAdapter lvadapter = new MyArrayAdapter(this, R.layout.mylistview, arrayapp);
+        lvadapter = new MyArrayAdapter(this, R.layout.mylistview, arrayapp);
         listapp.setAdapter(lvadapter);
+
+        GetImageItem get = new GetImageItem();
+        get.execute();
+
+//        lvadapter.getItem(1).setImage(getResources().getDrawable( R.drawable.key_alert));
+//        lvadapter.notifyDataSetChanged();
 
         listapp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0,View arg1, int arg2,long arg3) {
@@ -63,4 +76,43 @@ public class Options extends ActionBarActivity{
 //        stopService(new Intent(getBaseContext(), MyService.class));
     }
 
+    private Drawable resize(Drawable image) {
+
+
+        Bitmap b = ((BitmapDrawable)image).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 65, 65, false);
+        return new BitmapDrawable(getResources(), bitmapResized);
+    }
+
+    private class GetImageItem extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+
+            Drawable image = null;
+
+            for (int i = 0; i<arrayapp.size(); i++) {
+                try {
+                    image = resize(getPackageManager().getApplicationIcon(arrayapp.get(i).getApppackage()));
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                arrayapp.get(i).setImage(image);
+                publishProgress();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            lvadapter.notifyDataSetChanged();
+        }
+    }
 }
