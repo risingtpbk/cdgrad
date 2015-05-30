@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.TrafficStats;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,13 +33,23 @@ public class MainActivity extends ActionBarActivity {
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String pass = "pass";
     SharedPreferences sharedpreferences;
+    ProgressBar pro;
+    LinearLayout premain;
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        premain = (LinearLayout)findViewById(R.id.premain);
+        pro = (ProgressBar)findViewById(R.id.pro);
+
         mydb = new DBHelper(this);
+
+        getSupportActionBar().hide();
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         Intent restartService = new Intent(getApplicationContext(),BR_AlarmRestartService.class);
         restartService.setPackage(getPackageName());
@@ -63,25 +76,12 @@ public class MainActivity extends ActionBarActivity {
         AlarmManager alarmService2 = (AlarmManager)getApplicationContext().getSystemService(ALARM_SERVICE);
         alarmService2.setExact(AlarmManager.RTC, System.currentTimeMillis()+100, smsPI);
 
+        CreateDB create = new CreateDB();
+        create.execute();
 
-        File databaseFile = new File("/data/data/ninh.bk.project.graduationproject/databases/MyDatabase.db");
-        // check if databases folder exists, if not create one and its subfolders
-        if (!databaseFile.exists()) {
-            getAllApplication();
-            updateAllData();
-            insertAllAppSentSMS();
-            Log.i("DATABASE", "Already has");
-        } else {
-//            updateAllApplication();
 
-        }
 
-        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        if(!sharedpreferences.contains("pass"))
-        {
-            Intent i = new Intent(this, CreatePassword.class);
-            startActivity(i);
-        }
+
     }
 
     private void updateAllData() {
@@ -292,4 +292,44 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private class CreateDB extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+
+            File databaseFile = new File("/data/data/ninh.bk.project.graduationproject/databases/MyDatabase.db");
+            // check if databases folder exists, if not create one and its subfolders
+            if (!databaseFile.exists()) {
+                getAllApplication();
+                updateAllData();
+                insertAllAppSentSMS();
+                Log.i("DATABASE", "Already has");
+            } else {
+//            updateAllApplication();
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(!sharedpreferences.contains("pass"))
+            {
+                Intent i = new Intent(MainActivity.this, CreatePassword.class);
+                startActivity(i);
+            }
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(sharedpreferences.contains("pass")) {
+            premain.setVisibility(View.GONE);
+            getSupportActionBar().show();
+        }
+
+    }
 }
