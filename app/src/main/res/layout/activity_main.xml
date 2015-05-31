@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             style="?android:attr/textAppearanceLarge"
-            android:text="Initialzing for first time using\nPlease wait..."/>
+            android:text="Initializing for first time using\nPlease wait..."/>
 
         <ProgressBar
             android:id="@+id/pro"
